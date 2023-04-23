@@ -1,12 +1,13 @@
 import networkx as nx
 import matplotlib.pyplot as plt
+import numpy as np
 
 ''' Generate a random simple connected graph and save it to a file'''
 
 # number of nodes
-n = 10
+n = 15
 # probability of an edge
-p = 0.3
+p = 0.2
 
 # Generate a simple graph until it is connected
 while True:
@@ -14,8 +15,12 @@ while True:
     if nx.is_connected(G):
         break
 
+# Set seed
+np.random.seed(0)
+pos = nx.spring_layout(G)
+
 # Display the graph
-nx.draw(G, with_labels=True)
+nx.draw(G, pos=pos, with_labels=True)
 plt.show()
 
 # Create an adjacency list

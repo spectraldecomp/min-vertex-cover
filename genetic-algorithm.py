@@ -3,12 +3,13 @@ from collections import Counter
 
 import networkx as nx
 import matplotlib.pyplot as plt
+import numpy as np
 
 
 class genetic_algorithm:
 
     # Initialize
-    def __init__(self, graph_file_path="graphs/adj_list.txt", num_generations=1000, population_size=100,
+    def __init__(self, graph_file_path, num_generations=1000, population_size=100,
                  mutation_rate=0.05, crossover_rate=0.1, has_elitism=True, selection_method="tournament",
                  mutation_method="bitflip", crossover_method="single-point"):
         self.graph = self.import_graph(graph_file_path)
@@ -42,26 +43,7 @@ class genetic_algorithm:
             return -1000
         # Individual is a valid vertex cover
         else:
-            if self.num_vertices(individual) == 10:
-                return 1
-            if self.num_vertices(individual) == 9:
-                return 2
-            if self.num_vertices(individual) == 8:
-                return 3
-            if self.num_vertices(individual) == 7:
-                return 4
-            if self.num_vertices(individual) == 6:
-                return 5
-            if self.num_vertices(individual) == 5:
-                return 6
-            if self.num_vertices(individual) == 4:
-                return 7
-            if self.num_vertices(individual) == 3:
-                return 8
-            if self.num_vertices(individual) == 2:
-                return 9
-            if self.num_vertices(individual) == 1:
-                return 100
+           return -self.num_vertices(individual)
 
     def is_feasible(self, individual):
         vertex_cover = set()
@@ -262,12 +244,40 @@ class genetic_algorithm:
 class main:
 
     # Test the algorithm on a graph
-    def test(self):
-        ga = genetic_algorithm()
-        x = ga.run()
-        return x, ga.is_feasible(x)
+    def test(self, graph_file_path, num_generations, population_size, mutation_rate, crossover_rate, has_elitism, selection_method, mutation_method, crossover_method):
+        ga = genetic_algorithm(graph_file_path, num_generations, population_size, mutation_rate, crossover_rate, has_elitism, selection_method, mutation_method, crossover_method)
+        vertex_cover = ga.run()
+        return vertex_cover
+
+    def draw_graph(self, filename, vertex_cover=None):
+        # Load the adjacency list from the file
+        adj_list = {}
+        with open(filename, "r") as f:
+            lines = f.readlines()
+            for i, line in enumerate(lines):
+                neighbors = list(map(int, line.strip().split()))
+                adj_list[i] = neighbors
+
+        # Create the graph from the adjacency list
+        G = nx.Graph(adj_list)
+
+        # Set seed
+        np.random.seed(0)
+        pos = nx.spring_layout(G)
+
+        # Draw the graph
+        nx.draw(G, pos=pos, with_labels=True)
+
+        if vertex_cover:
+            # Draw each vertex in the vertex cover in red
+            vertex_cover_nodes = [i for i, x in enumerate(vertex_cover) if x == 1]
+            nx.draw_networkx_nodes(G, pos=pos, nodelist=vertex_cover_nodes, node_color="r")
+
+        plt.show()
+
 
 
 if __name__ == "__main__":
-    x = main().test()
-    print(x)
+    vertex_cover = main().test("graphs/adj_list.txt", num_generations=1000, population_size=100, mutation_rate=0.1, crossover_rate=0.9, has_elitism=True, selection_method="tournament", mutation_method="bitflip", crossover_method="uniform")
+    print("Vertex cover:", vertex_cover)
+    main().draw_graph("graphs/adj_list.txt", vertex_cover)
