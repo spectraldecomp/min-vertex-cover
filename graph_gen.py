@@ -5,7 +5,7 @@ import numpy as np
 ''' Generate a random simple connected graph and save it to a file'''
 
 # number of nodes
-n = 15
+n = 10
 # probability of an edge
 p = 0.2
 

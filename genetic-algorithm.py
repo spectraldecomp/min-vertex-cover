@@ -9,9 +9,8 @@ import numpy as np
 class genetic_algorithm:
 
     # Initialize
-    def __init__(self, graph_file_path, num_generations=1000, population_size=100,
-                 mutation_rate=0.05, crossover_rate=0.1, has_elitism=True, selection_method="tournament",
-                 mutation_method="bitflip", crossover_method="single-point"):
+    def __init__(self, graph_file_path, crossover_method, selection_method, mutation_method, num_generations=1000,
+                 mutation_rate=0.05, crossover_rate=0.9, population_size=100, has_elitism=True):
         self.graph = self.import_graph(graph_file_path)
         self.num_generations = num_generations
         self.population_size = population_size
@@ -244,8 +243,8 @@ class genetic_algorithm:
 class main:
 
     # Test the algorithm on a graph
-    def test(self, graph_file_path, num_generations, population_size, mutation_rate, crossover_rate, has_elitism, selection_method, mutation_method, crossover_method):
-        ga = genetic_algorithm(graph_file_path, num_generations, population_size, mutation_rate, crossover_rate, has_elitism, selection_method, mutation_method, crossover_method)
+    def test(self, graph_file_path, num_generations, mutation_rate, crossover_rate, selection_method, mutation_method, crossover_method):
+        ga = genetic_algorithm(graph_file_path, crossover_method, selection_method, mutation_method, num_generations, mutation_rate, crossover_rate)
         vertex_cover = ga.run()
         return vertex_cover
 
@@ -278,6 +277,6 @@ class main:
 
 
 if __name__ == "__main__":
-    vertex_cover = main().test("graphs/adj_list.txt", num_generations=1000, population_size=100, mutation_rate=0.1, crossover_rate=0.9, has_elitism=True, selection_method="tournament", mutation_method="bitflip", crossover_method="uniform")
+    vertex_cover = main().test("graphs/adj_list.txt", num_generations=1000, mutation_rate=0.1, crossover_rate=0.9,selection_method="tournament", mutation_method="bitflip", crossover_method="uniform")
     print("Vertex cover:", vertex_cover)
     main().draw_graph("graphs/adj_list.txt", vertex_cover)
