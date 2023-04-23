@@ -241,7 +241,7 @@ class genetic_algorithm:
         if self.has_elitism:
             population.extend(children)
             population = sorted(population, key=self.fitness)
-            return population[:self.population_size]
+            return population[self.population_size:]
         else:
             raise ValueError("Elitism is always enabled")
 
