@@ -145,8 +145,12 @@ class simulated_annealing:
         best_vertex_cover = current_vertex_cover
         best_fitness = current_fitness
 
-        # Loop until temperature is <= 10
-        while self.T > 10:
+        # Loop until temperature is <= 1. FHC has no use for temperature,
+        # but we use it for timing purposes
+        while self.T > 1:
+            # Loop until max iterations is reached. This is
+            # technically not the way to do SA/FHC, but it
+            # achieved better results since T decays so fast
             for i in range(self.max_iter):
                 # Perturb the current vertex cover
                 new_vertex_cover = self.perturb(current_vertex_cover, self.perturbation_type)
