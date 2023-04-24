@@ -1,2 +1,2 @@
 # min-vertex-cover
-Genetic algorithm to find a minimum vertex cover of a graph for Evolutionary Computation
+Genetic algorithm to find the minimum vertex cover of a graph for Evolutionary Computation
