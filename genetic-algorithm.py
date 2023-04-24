@@ -9,7 +9,7 @@ import numpy as np
 class genetic_algorithm:
 
     # Initialize
-    def __init__(self, graph_file_path, crossover_method, selection_method, mutation_method, num_generations=1000,
+    def __init__(self, graph_file_path, crossover_method, selection_method, mutation_method, num_generations=5000,
                  mutation_rate=0.05, crossover_rate=0.9, population_size=100, has_elitism=True):
         self.graph = self.import_graph(graph_file_path)
         self.num_generations = num_generations
@@ -38,6 +38,7 @@ class genetic_algorithm:
     # Calculate fitness of an individual (bitstring representation of a vertex cover)
     def fitness(self, individual):
         # Check if the individual is a valid vertex cover
+        # Unnecessary since all individuals are feasible by design
         if not self.is_feasible(individual):
             return -1000
         # Individual is a valid vertex cover
@@ -230,15 +231,14 @@ class genetic_algorithm:
 
     def run(self):
         population = self.generate_population()
-        for i in range(1000):
+        for i in range(self.num_generations):
             parent_pool = self.select_parent_pool(population)
             children = self.generate_children(parent_pool)
             children = self.mutate_children(children)
             population = self.elitism(population, children)
         return max(population, key=self.fitness)
 
-    '''MAIN'''
-
+'''MAIN'''
 
 class main:
 
@@ -246,7 +246,7 @@ class main:
     def test(self, graph_file_path, num_generations, mutation_rate, crossover_rate, selection_method, mutation_method, crossover_method):
         ga = genetic_algorithm(graph_file_path, crossover_method, selection_method, mutation_method, num_generations, mutation_rate, crossover_rate)
         vertex_cover = ga.run()
-        return vertex_cover
+        return vertex_cover, ga.num_vertices(vertex_cover)
 
     def draw_graph(self, filename, vertex_cover=None):
         # Load the adjacency list from the file
@@ -265,18 +265,21 @@ class main:
         pos = nx.spring_layout(G)
 
         # Draw the graph
-        nx.draw(G, pos=pos, with_labels=True)
+        nx.draw(G, pos=pos, with_labels=False, node_size = 25)
 
         if vertex_cover:
             # Draw each vertex in the vertex cover in red
             vertex_cover_nodes = [i for i, x in enumerate(vertex_cover) if x == 1]
-            nx.draw_networkx_nodes(G, pos=pos, nodelist=vertex_cover_nodes, node_color="r")
-
+            nx.draw_networkx_nodes(G, pos=pos, nodelist=vertex_cover_nodes, node_color="r", node_size=75)
+        plt.gca().set_title("Genetic Algorithm")
         plt.show()
 
 
 
 if __name__ == "__main__":
-    vertex_cover = main().test("graphs/adj_list.txt", num_generations=1000, mutation_rate=0.1, crossover_rate=0.9,selection_method="tournament", mutation_method="bitflip", crossover_method="uniform")
-    print("Vertex cover:", vertex_cover)
-    main().draw_graph("graphs/adj_list.txt", vertex_cover)
+    for i in range(5):
+        vertex_cover, size = main().test("graphs/adj_list.txt", num_generations=5000,
+                                   mutation_rate=0.05, crossover_rate=0.9,selection_method="roulette",
+                                   mutation_method="bitflip", crossover_method="uniform")
+        print("Vertex cover:", vertex_cover, "Size:", size)
+        main().draw_graph("graphs/adj_list.txt", vertex_cover)

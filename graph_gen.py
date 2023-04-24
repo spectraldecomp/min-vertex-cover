@@ -20,7 +20,7 @@ np.random.seed(0)
 pos = nx.spring_layout(G)
 
 # Display the graph
-nx.draw(G, pos=pos, with_labels=True)
+nx.draw(G, pos=pos, with_labels=False, node_size=25)
 plt.show()
 
 # Create an adjacency list
